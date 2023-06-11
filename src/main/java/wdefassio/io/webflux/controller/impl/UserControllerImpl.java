@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import wdefassio.io.webflux.controller.UserController;
+import wdefassio.io.webflux.mapper.UserMapper;
 import wdefassio.io.webflux.model.request.UserRequest;
 import wdefassio.io.webflux.model.response.UserResponse;
 import wdefassio.io.webflux.service.UserService;
@@ -20,6 +21,7 @@ import wdefassio.io.webflux.service.UserService;
 public class UserControllerImpl implements UserController {
 
     private final UserService userService;
+    private final UserMapper mapper;
 
     @Override
     public ResponseEntity<Mono<Void>> save(UserRequest request) {
@@ -31,7 +33,7 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public ResponseEntity<Mono<UserResponse>> find(String id) {
-        return null;
+        return ResponseEntity.ok().body(userService.findById(id).map(mapper::toResponse));
     }
 
     @Override

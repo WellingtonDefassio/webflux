@@ -10,8 +10,13 @@ import wdefassio.io.webflux.entity.User;
 @RequiredArgsConstructor
 public class UserRepository {
     private final ReactiveMongoTemplate mongoTemplate;
+
     public Mono<User> save(final User user) {
         return mongoTemplate.save(user);
+    }
+
+    public Mono<User> findById(final String id) {
+        return mongoTemplate.findById(id, User.class);
     }
 
 }

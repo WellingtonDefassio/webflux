@@ -18,9 +18,11 @@ import reactor.core.publisher.Mono;
 import wdefassio.io.webflux.entity.User;
 import wdefassio.io.webflux.mapper.UserMapper;
 import wdefassio.io.webflux.model.request.UserRequest;
+import wdefassio.io.webflux.model.response.UserResponse;
 import wdefassio.io.webflux.service.UserService;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -77,7 +79,20 @@ class UserControllerImplTest {
     }
 
     @Test
+    @DisplayName("find by id success")
     void find() {
+        String id = "123456id";
+        UserResponse userResponse = new UserResponse(id, "Valdir", "valdir@email.com", "123456");
+        when(userService.findById(anyString())).thenReturn(Mono.just(User.builder().build()));
+        when(mapper.toResponse(any(User.class))).thenReturn(userResponse);
+
+        client.get().uri(baseUri + "/" + id)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.id").isEqualTo(id);
+
     }
 
     @Test

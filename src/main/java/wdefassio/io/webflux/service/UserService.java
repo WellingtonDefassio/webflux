@@ -3,6 +3,7 @@ package wdefassio.io.webflux.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import wdefassio.io.webflux.entity.User;
 import wdefassio.io.webflux.mapper.UserMapper;
@@ -29,6 +30,10 @@ public class UserService {
     public Mono<User> findById(final String id) {
         return userRepository.findById(id).switchIfEmpty(Mono.error(
                 new ObjectNotFoundException(format("User not found for Id: %s", id))));
+    }
+
+    public Flux<User> findAll() {
+        return userRepository.findAll();
     }
 
 

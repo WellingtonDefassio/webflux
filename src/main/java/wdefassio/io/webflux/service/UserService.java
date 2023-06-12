@@ -8,6 +8,9 @@ import wdefassio.io.webflux.entity.User;
 import wdefassio.io.webflux.mapper.UserMapper;
 import wdefassio.io.webflux.model.request.UserRequest;
 import wdefassio.io.webflux.repository.UserRepository;
+import wdefassio.io.webflux.service.exception.ObjectNotFoundException;
+
+import static java.lang.String.format;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +27,8 @@ public class UserService {
     }
 
     public Mono<User> findById(final String id) {
-        return userRepository.findById(id);
+        return userRepository.findById(id).switchIfEmpty(Mono.error(
+                new ObjectNotFoundException(format("User not found for Id: %s", id))));
     }
 
 

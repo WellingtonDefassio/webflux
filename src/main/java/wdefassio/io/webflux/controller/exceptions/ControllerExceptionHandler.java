@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import reactor.core.publisher.Mono;
+import wdefassio.io.webflux.service.exception.ObjectNotFoundException;
 
 import java.time.LocalDateTime;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
@@ -25,6 +27,16 @@ public class ControllerExceptionHandler {
                 .status(BAD_REQUEST.value())
                 .error(BAD_REQUEST.getReasonPhrase())
                 .message(verifyDupKey(ex.getMessage()))
+                .path(request.getPath().toString())
+                .build()));
+    }
+    @ExceptionHandler(ObjectNotFoundException.class)
+    ResponseEntity<Mono<StandardError>> objectNotFound(ObjectNotFoundException ex, ServerHttpRequest request) {
+        return ResponseEntity.status(NOT_FOUND).body(Mono.just(StandardError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(NOT_FOUND.value())
+                .error(NOT_FOUND.getReasonPhrase())
+                .message(ex.getMessage())
                 .path(request.getPath().toString())
                 .build()));
     }
